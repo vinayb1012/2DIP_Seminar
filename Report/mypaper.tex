@@ -75,7 +75,7 @@ There are various approaches to this problem. Some of them are image-based metho
 
 \section{Datasets}
 
-The following table shows a multitude of datasets to train and evaluate face tracking models:
+Table \ref{datasets} shows various image-based and video datasets to train and evaluate face tracking models.
 
 
 \begin{table}[htbp]
@@ -88,19 +88,21 @@ AFLW             & Annotated Facial Landmarks in the Wild & \begin{tabular}[c]{@
 LFW              & Labeled Faces in the Wild              & \begin{tabular}[c]{@{}l@{}}13,233 images of 5749 people detected \\ and centered by Viola Jones face detector\end{tabular}                        & Yes            & Yes                          \\ \hline
 Helen            & Helen facial feature dataset           & \begin{tabular}[c]{@{}l@{}}2000 training and 330 test images with \\ accurate consistent annotations of primary \\ facial components\end{tabular} & Yes            & Yes                          \\ \hline
 LFPW             & Labeled Face Parts in the Wild         & \begin{tabular}[c]{@{}l@{}}1432 images with 29 landmarks on each \\ image\end{tabular}                                                            & Yes            & Yes                          \\ \hline
-TF               & Talking Face                           & \begin{tabular}[c]{@{}l@{}}500 images of 5 videos with 68 landmarks \\ on each image\end{tabular}                                                 & No             & Yes                          \\ \hline
+TF               & Talking Face                           & \begin{tabular}[c]{@{}l@{}}5000 frames of a person engaged in a\\ conversation with 68 landmarks in each frame\\ on each image\end{tabular}                                                 & No             & Yes                          \\ \hline
 FM               & Face Movies                            & \begin{tabular}[c]{@{}l@{}}2150 images of 6 videos with 68 landmarks \\ on each image\end{tabular}                                                & Yes            & Yes                          \\ \hline
 SynHead          & Synthetic dataset                      & 
 \begin{tabular}[c]{@{}l@{}}510,960 frames of 70 head motion tracks                                                                                                \\
 that include large face pose variations       \end{tabular} & No            & Yes                          \\ \hline
 BIWI             & Biwi kinect head pose database         & 24 videos with over 15k frames of 20 people                                                                                                                      & Yes            & Yes                          \\ \hline
 COFW             & Caltech Occluded Faces in the Wild     & \begin{tabular}[c]{@{}l@{}}1007 images with 29 manually annotated \\ landmarks on each image\end{tabular}                                         & Yes            & Yes                          \\ \hline
+
 \end{tabular}
+\label{datasets}
 \end{table}
 
 \section{Face Tracking Approaches}
 
-\subsection{Recurrent Encoder-Decoder Network for Video-based Face Alignment (2017) \cite{rednet}}
+\subsection{Recurrent Encoder-Decoder Network for Video-based Face Alignment (2016) \cite{rednet}}
 
 This method leverages temporal information to predict facial landmarks in each frame. It uses recurrent learning at both spatial and temporal dimensions. At the temporal level, the features are separated into \textit{temporal-variant} features such as pose and expression, and \textit{temporal-invariant} features such as facial identity and recurrent learning is applied to the temporal-variant features. This feature disentangling has shown to achieve better generalization and more accurate results. Figure \ref{rednet_architecture} shows the pipeline of recurrent encoder-decoder network \\
 
@@ -168,12 +170,6 @@ If $I_k$ is the $k^{th}$ frame, $B_k$ is the bounding box for the $k^{th}$ frame
 
 $p\left(B_{k} | I_{k}\right) p\left(V_{k} | B_{k}, I_{k}\right)=p\left(V_{k} | I_{k}\right) p\left(B_{k} | V_{k}, I_{k}\right)$\\
 
-The learning objectives of bounding box tracking and landmark detection are treated as two conditional probabilities and the dependency between these two tasks are formulated as two marginal distributions. Since the ground-truth marginal distributions are not available, communication channels between the agents are used as alternatives to satisfy the probabilistic duality.
-
-
-
-
-
 \begin{figure}
 \copyrightbox[b]{\includegraphics[scale=0.5]{DADRL}}%
 {Source: Minghao Guo, Jiwen Lu, Jie Zhou. Dual-Agent Deep Reinforcement Learning for Deformable Face Tracking}
@@ -181,9 +177,17 @@ The learning objectives of bounding box tracking and landmark detection are trea
 \label{dadrl_architecture}
 \end{figure}
 
-\subsection{Two Stream Transformer Networks (2017)}
+The learning objectives of bounding box tracking and landmark detection are treated as two conditional probabilities and the dependency between these two tasks are formulated as two marginal distributions. Since the ground-truth marginal distributions are not available, communication channels between the agents are used as alternatives to satisfy the probabilistic duality. For each frame, the terminal state of the previous frame is used for initializing current state. The two agents decide a sequence of actions based on the observed state and exchanged messages, to adjust the bounding box and regress facial landmarks simultaneously. The messages sent from the tracking agent to the alignment agent are encoded by a deconvolution layer. It provides additional textural information to the alignment agent to improve its robustness. The messages from the alignment agent to the tracking agent are encoded by a LSTM unit. It provides 3D pose information to the tracking agent to improve bounding box tracking.\\
 
-This approach aims to capture both spatial as well as temporal information. It proposes a two-stream deep learning method for video-based face alignment. The spatial stream aims to capture information on still frames. It is trained to transform image pixels to landmark positions directly on still frames. The temporal stream aims to capture temporal consistency information across successive frames. It is trained to encode all facial changes in the temporal dimension. It is followed by an RNN to model the sequential information over consecutive frames. Facial landmarks are determined by a weighted fusion of both spatial and temporal streams. Figure 5 shows the proposed architecture.
+The model is trained in two stages. The \textbf{first stage} is the \textit{supervised learning stage} in which the two agents are trained separately. All training data from 300 faces in the wild challenge (300-W image dataset) is used to train the alignment agent. The 300-VW training set is used to train the tracking agent. The communicated messages are set to zero in this stage. The \textbf{second stage} is the \textit{reinforcement learning stage} in which the whole network is trained with the 300-VW training set. For evaluation, normalized root mean squared error (RMSE) and cumulative error distribution plots are used.
+
+
+
+
+
+\subsection{Two Stream Transformer Networks (2017) \cite{tstn}}
+
+This approach aims to capture both spatial information on still frames as well as temporal information across frames. It proposes a two-stream deep learning method that decomposes the video input to spatial and temporal streams. The spatial stream aims to capture appearance information from still frames. It is trained to transform image pixels to landmark positions directly on still frames and then to refine the current facial shape based on previous shape. The temporal stream aims to capture temporal consistency information across successive frames. It consists of an encoder-decoder module. The encoder is trained to encode the spatial information as active appearance codes that capture the whole face changes across frames in the temporal dimension. The decoder remaps the learned codes to original face input size. The temporal consistency information for each landmark is used to improve alignment accuracy. It also consists of a two-layer RNN in between the encoder-decoder module. The first layer captures spatial-temporal appearance features whereas the second layer memorizes the temporal information across frames. Facial landmarks are determined by a weighted fusion of both spatial and temporal streams. Figure 5 shows the proposed architecture. The landmark positions are refined simultaneously in both the streams.
 
 \begin{figure}
 \copyrightbox[b]{\includegraphics[scale=0.5]{TSTN}}%
@@ -191,9 +195,12 @@ This approach aims to capture both spatial as well as temporal information. It p
 \caption{TSTN pipeline}
 \end{figure}
 
-\subsection{Face Alignment Recurrent Network (2017)}
+The temporal stream network is trained using the 300-VW training set. The pre-trained spatial stream network is finetuned beforehand. The testing set of Talking Face dataset (TF) is used for testing the model. Normalized root mean square error (RMSE) and cumulative error distribution plots are used for evaluating the model.
 
-This recurrent regression approach for landmark detection uses the LSTM model to exploit both spatial and temporal information. The predicted landmark location is used as a basis for estimation in the next stage (spatial) and used as a basis for estimation in the next frame (temporal).
+
+\subsection{Face Alignment Recurrent Network (2017) \cite{farn}}
+
+This recurrent regression approach for landmark detection uses the LSTM model to exploit both spatial and temporal information. The predicted landmark location is used as a basis for estimation in the next stage (spatial) and used as a basis for estimation in the next frame (temporal). The process continues in a recurrent manner until the face shape is finalized. 
 
 
 
