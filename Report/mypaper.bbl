@@ -1,0 +1,32 @@
+\begin{thebibliography}{1}
+
+\bibitem{dynamic_facial_analysis}
+Jinwei Gu, Xiaodong Yang, Shalini Mello, and Jan Kautz.
+\newblock Dynamic facial analysis: From bayesian filtering to recurrent neural
+  network.
+\newblock pages 1531--1540, 07 2017.
+
+\bibitem{dadrl}
+Minghao Guo, Jiwen Lu, and Jie Zhou.
+\newblock {\em Dual-Agent Deep Reinforcement Learning for Deformable Face
+  Tracking: 15th European Conference, Munich, Germany, September 8-14, 2018,
+  Proceedings, Part X}, pages 783--799.
+\newblock 09 2018.
+
+\bibitem{farn}
+Qiqi Hou, Jinjun Wang, Ruibin Bai, Sanping Zhou, and Yihong Gong.
+\newblock Face alignment recurrent network.
+\newblock {\em Pattern Recognition}, 74, 09 2017.
+
+\bibitem{tstn}
+Hao Liu, Jiwen Lu, Jianjiang Feng, and Jie Zhou.
+\newblock Two-stream transformer networks for video-based face alignment.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  PP:1--1, 08 2017.
+
+\bibitem{rednet}
+Xi~Peng, Rogerio Feris, Xiaoyu Wang, and Dimitris Metaxas.
+\newblock A recurrent encoder-decoder network for sequential face alignment.
+\newblock 08 2016.
+
+\end{thebibliography}
