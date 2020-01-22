@@ -25,7 +25,7 @@
 \usepackage{url}
 
 \usepackage{caption}
-
+\usepackage{cite}
 \usepackage{copyrightbox}
 
 
@@ -55,16 +55,17 @@
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-In this paper, we review face tracking methods and their performance in challenging conditions. This paper focuses on those methods that use deep learning and exploit the temporal information, i.e video-based methods. Recent developments include using an encoder-decoder network, recurrent network, deep reinforcement learning, two-stream network, etc This paper aims to compare various approaches in terms of accuracy, computational efficiency, the dataset(s) used for training, evaluation metrics, robustness to large head poses and occlusions, etc
+In this paper, we review different face tracking architectures and their performance in challenging conditions. We focus on deep learning  based methods which exploit the temporal information across frames, i.e video-based methods. Recent developments include using an encoder-decoder network, recurrent network, deep reinforcement learning and two-stream network. This paper aims to compare those approaches in terms of accuracy, the dataset(s) used for training, evaluation metrics, robustness to large head poses and occlusions, etc
 \keywords{Face tracking, Facial landmarks, Deep Learning, Reinforcement Learning, Temporal information}
 \end{abstract}
 
 
 % This is your content. Name the sections appropriately
 \section{Introduction}
-Face tracking is a computer vision task of tracking specific landmarks around the face across all frames in a given video.
-Face Tracking technology plays an important role in computer vision applications such as \textit{Face analysis}, \textit{Person Identification}, \textit{Activity recognition}, \textit{Expression analysis}, \textit{Face modeling} etc. This is a challenging problem as the videos may not be captured in constrained conditions and may have illumination inconsistencies, large head poses, occlusions etc.
-There are various approaches to this problem. Some of them are image-based methods where the models are trained on still frames and the detection also happens independently at each frame. Some other methods are video-based that use an incremental-learning technique by exploiting the temporal connection between successive frames. This survey focuses on video-based methods. Figure \textcolor{red}{\ref{generic_video_based}} shows a generic high-level architecture of a video-based landmark detection pipeline.
+Face tracking is a computer vision task of tracking the face across all frames of a video. It may involve tracking specific landmarks around the face, or tracking a bounding box around the face across frames.
+Face Tracking technology plays an important role in computer vision applications such as \textit{Face recognition}\cite{face_recognition}, \textit{Activity recognition}, \textit{Expression recognition}\cite{expression_recognition} and \textit{Face modeling}. This is a challenging problem as the videos may not be captured in constrained conditions and may have illumination inconsistencies, large head poses, blurriness, occlusions etc.\\
+
+There are various approaches to this problem. Some of them are image-based methods, where the models are trained on still frames and the detection also happens independently at each frame. Other methods are video-based and use an incremental-learning technique to exploit the temporal connection between successive frames. We make a comparison between the different architectures, datasets used for training and testing, evaluation metrics and robustness to challenging conditions. Figure \textcolor{red}{\ref{generic_video_based}} shows a generic high-level architecture of a video-based landmark detection pipeline.
 
 \begin{figure}[h!]
 
@@ -75,27 +76,28 @@ There are various approaches to this problem. Some of them are image-based metho
 
 \section{Datasets}
 
-Table \textcolor{red}{\ref{datasets}} shows various image-based and video datasets to train and evaluate face tracking models.
+In this section, we list the datasets commonly used for landmark-based face tracking. There are many publicly available datasets for face tracking. Datasets can be categorized into constrained datasets and unconstrained datasets (in the wild).
+Table \textcolor{red}{\ref{datasets}} shows various image-based and video datasets.
 
 
 \begin{table}[htbp]
 \caption{Datasets}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
-\textbf{Dataset} & \textbf{Description}                   & \textbf{Contains}                                                                                                                                 & \textbf{Wild?} & \textbf{Publicly available?} \\ \hline
-300VW            & 300 videos in the wild                 & \begin{tabular}[c]{@{}l@{}}114 videos with 218,595 frames with 68\\  landmarks per frame\end{tabular}                                             & Yes            & Yes                          \\ \hline
-AFLW             & Annotated Facial Landmarks in the Wild & \begin{tabular}[c]{@{}l@{}}Around 25k annotated face images with 21 \\ landmarks per image\end{tabular}                                           & Yes            & Yes                          \\ \hline
-LFW              & Labeled Faces in the Wild              & \begin{tabular}[c]{@{}l@{}}13,233 images of 5749 people detected \\ and centered by Viola Jones face detector\end{tabular}                        & Yes            & Yes                          \\ \hline
-Helen            & Helen facial feature dataset           & \begin{tabular}[c]{@{}l@{}}2000 training and 330 test images with 194\\ landmarks and accurate consistent \\ annotations of primary facial components\end{tabular} & Yes            & Yes                          \\ \hline
-LFPW             & Labeled Face Parts in the Wild         & \begin{tabular}[c]{@{}l@{}}1432 images with 29 landmarks on each \\ image\end{tabular}                                                            & Yes            & Yes                          \\ \hline
-TF               & Talking Face                           & \begin{tabular}[c]{@{}l@{}}5000 frames of a person engaged in a\\ conversation with 68 landmarks in each \\frame on each image\end{tabular}                                                 & No             & Yes                          \\ \hline
-FM               & Face Movies                            & \begin{tabular}[c]{@{}l@{}}2150 images of 6 videos with 68 landmarks \\ on each image\end{tabular}                                                & Yes            & Yes                          \\ \hline
+\textbf{Dataset} & \textbf{Description}                   & \textbf{Contains}                                                                                                                                 & \textbf{Wild?} \\ \hline
+300VW\cite{300-VW_1, 300-VW_2, 300-VW_3}            & 300 videos in the wild                 & \begin{tabular}[c]{@{}l@{}}114 videos with 218,595 frames \\with 68  landmarks per frame\end{tabular}                                             & Yes            \\ \hline
+AFLW             & Annotated Facial Landmarks in the Wild & \begin{tabular}[c]{@{}l@{}}Around 25k annotated face \\images with 21  landmarks per image\end{tabular}                                           & Yes            \\ \hline
+LFW              & Labeled Faces in the Wild              & \begin{tabular}[c]{@{}l@{}}13,233 images of 5749 people detected \\ and centered by Viola Jones face detector\end{tabular}                        & Yes            \\ \hline
+Helen            & Helen facial feature dataset           & \begin{tabular}[c]{@{}l@{}}2000 training and 330 test images with \\194 landmarks and accurate \\ annotations of primary facial components\end{tabular} & Yes             \\ \hline
+LFPW             & Labeled Face Parts in the Wild         & \begin{tabular}[c]{@{}l@{}}1432 images with 29 landmarks on each \\ image\end{tabular}                                                            & Yes            \\ \hline
+TF               & Talking Face                           & \begin{tabular}[c]{@{}l@{}}5000 frames of a person engaged in a\\ conversation with 68 landmarks in each \\frame on each image\end{tabular}                                                 & No             \\ \hline
+FM               & Face Movies                            & \begin{tabular}[c]{@{}l@{}}2150 images of 6 videos with 68 \\landmarks on each image\end{tabular}                                                & Yes            \\ \hline
 SynHead          & Synthetic dataset                      & 
 \begin{tabular}[c]{@{}l@{}}510,960 frames of 70 head motion tracks                                                                                                \\
-that include large face pose variations       \end{tabular} & No            & Yes                          \\ \hline
-BIWI             & Biwi kinect head pose database         & 24 videos with over 15k frames of 20 people                                                                                                                      & Yes            & Yes                          \\ \hline
-COFW             & Caltech Occluded Faces in the Wild     & \begin{tabular}[c]{@{}l@{}}1007 occluded face images with 29 manually\\ annotated landmarks on each image\end{tabular}                                         & Yes            & Yes                          \\ \hline
-IBUG             & IBUG dataset     & \begin{tabular}[c]{@{}l@{}}135 images with difficult poses and \\expressions\end{tabular}                                         & Yes            & Yes                          \\ \hline
+that include large face pose variations       \end{tabular} & No            \\ \hline
+BIWI             & Biwi kinect head pose database         & \begin{tabular}[c]{@{}l@{}}24 videos with over 15k frames of 20\\ people                                                                                                                   \end{tabular}   & Yes            \\ \hline
+COFW             & Caltech Occluded Faces in the Wild     & \begin{tabular}[c]{@{}l@{}}1007 occluded face images with 29 \\manually annotated landmarks\end{tabular}                                         & Yes            \\ \hline
+IBUG             & IBUG dataset     & \begin{tabular}[c]{@{}l@{}}135 images with difficult poses and \\expressions\end{tabular}                                         & Yes            \\ \hline
 
 \end{tabular}
 \label{datasets}
