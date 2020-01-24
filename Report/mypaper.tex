@@ -70,12 +70,14 @@ In this paper, we review different face tracking architectures and their perform
 % This is your content. Name the sections appropriately
 \section{Introduction}
 Face tracking is a computer vision task of tracking the face across all frames of a video. It may involve tracking specific landmarks around the face, or tracking a bounding box around the face across frames.
-Face Tracking technology plays an important role in computer vision applications such as \textit{Face recognition}\cite{face_recognition}, \textit{Expression recognition}\cite{expression_recognition} and \textit{Face modeling}\cite{face_modeling}. This is a challenging problem as the videos may not be captured in constrained conditions and may have illumination inconsistencies, large head poses, blurriness, occlusions etc.\\
+Face Tracking technology plays an important role in computer vision applications such as \textit{Face recognition}\cite{face_recognition}, \textit{Expression recognition}\cite{expression_recognition} and \textit{Face modeling}\cite{face_modeling}. This is a challenging problem as the videos may not be captured in constrained conditions and may have illumination inconsistencies, large head poses, blurriness, occlusions etc.
 
-There are various approaches to this problem. Some of them are image-based methods, where the models are trained on still frames and the detection also happens independently at each frame. Other methods are video-based and use an incremental-learning technique to exploit the temporal connection between successive frames. We make a comparison between the different architectures, datasets used for training and testing, evaluation metrics and robustness to challenging conditions. Figure \ref{generic_video_based} shows a generic high-level architecture of a video-based landmark detection pipeline.
+There are various approaches to this problem. Some of them are image-based methods, where the models are trained on still frames and the detection also happens independently at each frame. Other methods are video-based and use an incremental-learning technique to exploit the temporal connection between successive frames. Figure \ref{generic_video_based} shows a generic high-level architecture of a video-based landmark detection pipeline.
+
+In this paper we make a comparison between the different architectures, datasets used for training and testing, evaluation metrics and robustness to challenging conditions. 
 
 \begin{figure}[h!]
-
+\centering
 \includegraphics[scale=0.5]{Media/generic_video_based}
 \caption{Generic architecture of video based methods. Landmarks detected in the current frame are used as an initialization for the next frame}
 \label{generic_video_based}
@@ -83,61 +85,59 @@ There are various approaches to this problem. Some of them are image-based metho
 
 \section{Datasets}
 
-In this section, we list the datasets commonly used for landmark-based face tracking. There are many publicly available datasets for face tracking. Datasets can be categorized into constrained datasets and unconstrained datasets (in the wild).
-Table \ref{datasets} shows various image-based and video datasets.
+In this section, we list the datasets commonly used for landmark-based face tracking. These datasets are publicly available for research purposes. Datasets can be categorized into constrained datasets and unconstrained datasets (in the wild).
+Table \ref{datasets} shows various image-based and video datasets. Most methods use the 300-VW\cite{300-VW_2} and the TF\cite{tf} datasets to evaluate their models and compete in the 300-VW challenge. 
 
 
-\begin{table}[htbp]
-\caption{Datasets}
+\begin{table}[]
+\centering
+\tiny
+\caption{Datasets used for facial landmark detection and tracking}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
-\textbf{Dataset} & \textbf{Description}                   & \textbf{Contains}                                                                                                                                 & \textbf{Wild?} \\ \hline
-300VW\cite{300-VW_1, 300-VW_2, 300-VW_3}            & 300 videos in the wild                 & \begin{tabular}[c]{@{}l@{}}114 videos with 218,595 frames \\with 68  landmarks per frame\end{tabular}                                             & Yes            \\ \hline
-AFLW\cite{aflw}             & \begin{tabular}[c]{@{}l@{}}Annotated Facial Landmarks \\in the Wild\end{tabular} & \begin{tabular}[c]{@{}l@{}}Around 25k annotated face \\images with 21  landmarks per image\end{tabular}                                           & Yes            \\ \hline
-LFW\cite{lfw}              & Labeled Faces in the Wild              & \begin{tabular}[c]{@{}l@{}}13,233 images of 5749 people detected \\ and centered by Viola Jones face detector\end{tabular}                        & Yes            \\ \hline
-Helen\cite{helen}            & Helen facial feature dataset           & \begin{tabular}[c]{@{}l@{}}2000 training and 330 test images with \\194 landmarks and accurate \\ annotations of primary facial components\end{tabular} & Yes             \\ \hline
-LFPW\cite{lfpw}             & Labeled Face Parts in the Wild         & \begin{tabular}[c]{@{}l@{}}1432 images with 29 landmarks on each \\ image\end{tabular}                                                            & Yes            \\ \hline
-TF\cite{tf}               & Talking Face                           & \begin{tabular}[c]{@{}l@{}}5000 frames of a person engaged in a\\ conversation with 68 landmarks in each \\frame on each image\end{tabular}                                                 & No             \\ \hline
-FM\cite{fm}               & Face Movies                            & \begin{tabular}[c]{@{}l@{}}2150 images of 6 videos with 68 \\landmarks on each image\end{tabular}                                                & Yes            \\ \hline
-SynHead\cite{dynamic_facial_analysis}          & Synthetic dataset                      & 
-\begin{tabular}[c]{@{}l@{}}510,960 frames of 70 head motion tracks                                                                                                \\
-that include large face pose variations       \end{tabular} & No            \\ \hline
-BIWI\cite{biwi}             & Biwi kinect head pose database         & \begin{tabular}[c]{@{}l@{}}24 videos with over 15k frames of 20\\ people                                                                                                                   \end{tabular}   & Yes            \\ \hline
-COFW \cite{cofw}             & \begin{tabular}[c]{@{}l@{}}Caltech Occluded Faces \\in the Wild \end{tabular}    & \begin{tabular}[c]{@{}l@{}}1007 occluded face images with 29 \\manually annotated landmarks\end{tabular}                                         & Yes            \\ \hline
-IBUG\cite{ibug}             & IBUG dataset     & \begin{tabular}[c]{@{}l@{}}135 images with difficult poses and \\expressions\end{tabular}                                         & Yes            \\ \hline
-RWMB\cite{fab}             & Real-World Motion Blur     & \begin{tabular}[c]{@{}l@{}}10000 faces with 98 landmarks including \\occlusion, blur, illumination changes etc.\end{tabular}                                         & Yes            \\ \hline
-
+\textbf{Dataset} & \textbf{Description}                                                              & \textbf{\begin{tabular}[c]{@{}l@{}}Video/\\ Image\end{tabular}} & \textbf{Contains}                                                                                                                                        & \textbf{Wild?} \\ \hline
+AFLW\cite{aflw}             & \begin{tabular}[c]{@{}l@{}}Annotated Facial Landmarks \\ in the Wild\end{tabular} & Image                                                           & \begin{tabular}[c]{@{}l@{}}Around 25k annotated face images with \\ 21 landmarks per image\end{tabular}                                                  & Yes            \\ \hline
+COFW\cite{cofw}             & \begin{tabular}[c]{@{}l@{}}Caltech Occluded Faces in \\ the Wild\end{tabular}     & Image                                                           & \begin{tabular}[c]{@{}l@{}}1007 occluded face images with 29 \\ manually annotated landmarks\end{tabular}                                                & Yes            \\ \hline
+Helen\cite{helen}            & Helen facial feature dataset                                                      & Image                                                           & \begin{tabular}[c]{@{}l@{}}2000 training and 330 test images with \\ 194 landmarks and accurate annotations \\ of primary facial components\end{tabular} & Yes            \\ \hline
+IBUG\cite{ibug}             & IBUG dataset                                                                      & Image                                                           & \begin{tabular}[c]{@{}l@{}}135 images with difficult poses and \\ expressions\end{tabular}                                                               & Yes            \\ \hline
+LFPW\cite{lfpw}             & Labeled Face Parts in the Wild                                                    & Image                                                           & \begin{tabular}[c]{@{}l@{}}1432 images with 29 landmarks on \\ each image\end{tabular}                                                                   & Yes            \\ \hline
+LFW\cite{lfw}              & Labeled Faces in the Wild                                                         & Image                                                           & \begin{tabular}[c]{@{}l@{}}13,233 images of 5749 people detected \\ and centered by Viola Jones face detector\end{tabular}                               & Yes            \\ \hline
+BIWI\cite{biwi}             & Biwi kinect head pose database                                                    & Video                                                           & \begin{tabular}[c]{@{}l@{}}24 videos with over 15k frames of \\ 20 people\end{tabular}                                                                   & Yes            \\ \hline
+FM\cite{fm}               & Face Movies                                                                       & Video                                                           & \begin{tabular}[c]{@{}l@{}}2150 images of 6 videos with 68 landmarks \\ on each image\end{tabular}                                                       & Yes            \\ \hline
+RWMB\cite{fab}             & Real-World Motion Blur                                                            & Video                                                           & \begin{tabular}[c]{@{}l@{}}10000 face videos with 98 landmarks \\ including occlusion, blur, illumination \\ changes etc.\end{tabular}                   & Yes            \\ \hline
+SynHead\cite{dynamic_facial_analysis}          & Synthetic dataset                                                                 & Video                                                           & \begin{tabular}[c]{@{}l@{}}510,960 frames of 70 head motion tracks \\ that include large face pose variations\end{tabular}                               & Yes            \\ \hline
+TF\cite{tf}               & Talking Face                                                                      & Video                                                           & \begin{tabular}[c]{@{}l@{}}5000 frames of a person engaged in a \\ conversation with 68 landmarks in each \\ frame on each image\end{tabular}            & No             \\ \hline
+300VW\cite{300-VW_1,300-VW_2,300-VW_3}            & 300 videos in the wild                                                            & Video                                                           & \begin{tabular}[c]{@{}l@{}}114 videos with 218,595 frames with \\ 68 landmarks per frame\end{tabular}                                                    & Yes            \\ \hline
 \end{tabular}
 \label{datasets}
 \end{table}
 
 \section{Face Tracking Approaches}
 
-In this section, we look at some of the state-of-the-art approaches for video-based facial landmark tracking. Deep learning methods, in general, use CNN and RNN to detect landmarks.
+In this section, we describe some of the state-of-the-art approaches for video-based facial landmark tracking. Deep learning methods, in general, use CNN and RNN to detect landmarks.
 \subsection{Recurrent Encoder-Decoder Network for Video-based Face Alignment (2016) \cite{rednet}}
 
-This method leverages temporal information to predict facial landmarks in each frame. It uses recurrent learning at both spatial and temporal dimensions. At the temporal level, the features are separated into \textit{temporal-variant} features such as pose and expression, and \textit{temporal-invariant} features such as facial identity and recurrent learning is applied to the temporal-variant features. This feature disentangling has shown to achieve better generalization and more accurate results. Figure \ref{rednet_architecture} shows the pipeline of recurrent encoder-decoder network \\
-
+This method leverages temporal information to predict facial landmarks in each frame and uses recurrent learning at both spatial and temporal dimensions. At the temporal level, the features are separated into \textit{temporal-variant} features such as pose and expression, and \textit{temporal-invariant} features such as facial identity. Recurrent learning is only applied to the temporal-variant features. This feature disentangling has shown to achieve better generalization and more accurate results. Figure \ref{rednet_architecture} shows the pipeline of recurrent encoder-decoder network. 
 \begin{figure}
-\copyrightbox[b]{\includegraphics[scale=0.5]{Media/rednet_architecture}}%
-{Source: Xi Peng, Rogerio S. Feris, Xiaoyu Wang, Dimitris N. Metaxas. RED-Net: A Recurrent Encoder-Decoder Network for Video-based Face Alignment}
-\caption{Overview of REDNet pipeline}
+\centering
+\includegraphics[scale=0.5]{Media/rednet_architecture}
+\caption{Overview of REDNet pipeline Source:\cite{rednet}}
 \label{rednet_architecture}
 \end{figure}
 
 The network consists of 4 modules -
 \begin{itemize}
 \item[(1)] \textbf{Encoder-Decoder}:-
-The encoder encodes features from a single video frame into an intermediate low dimensional representation by performing a sequence of convolutions, pooling and batch normalization. The decoder upsamples the low dimensional representation and transforms it into a response map that contains facial landmarks.\\
+The encoder encodes features from a single video frame into an intermediate low dimensional representation by performing a sequence of convolutions, pooling and batch normalization. The decoder upsamples the low dimensional representation and transforms it into a response map that contains facial landmarks.
 
 
 \item[(2)] \textbf{Spatial recurrent learning}:-
-The purpose is to find the exact location of landmarks in a coarse-to-fine manner by iteratively providing the previous prediction as feedback along with the video frame. This is carried out in 2 steps - \textit{Landmark Detection} and \textit{Landmark Regression}. Landmark detection step locates 7 major facial components whereas landmark regression step refines predicted locations of all 68 landmark positions\\
+The purpose is to find the exact location of landmarks in a coarse-to-fine manner by iteratively providing the previous prediction as feedback along with the video frame. This is carried out in 2 steps - \textit{Landmark Detection} and \textit{Landmark Regression}. Landmark detection step locates 7 major facial components whereas landmark regression step refines predicted locations of all 68 landmark positions
 
 \item[(3)] \textbf{Temporal recurrent learning}:-
 This is proposed to model the temporal-variant factors such as pose and expression. The temporal variations in the temporal-invariant factors (non-identity code) are modeled using an LSTM unit consisting of 256 hidden neurons.
 Trained using \textit{T} successive frames. Detection and regression tasks are performed frame by frame. 
-\\
+
 
 \item[(4)] \textbf{Supervised identity disentangling}:-
 Complete identity and non-identity factor disentangling cannot be guaranteed. More supervised information is needed to achieve better separation of the features. This module applies identity constraint to the identity code to further separate identity code from the non-identity code. Face recognition is applied to the identity code to classify the people present in the frames. This is shown to yield better generalization and better test accuracy\\
@@ -146,18 +146,17 @@ Complete identity and non-identity factor disentangling cannot be guaranteed. Mo
 
 \subsection{Dynamic Facial Analysis using Recurrent Neural Networks (2017) \cite{dynamic_facial_analysis}}
 
-This approach uses RNN for joint estimation and face tracking. 
-It proposes RNN as an alternative approach that performs better than previous video-based approaches for dynamic facial analysis which use Kalman filters or particle filters, inspired by the fact that RNNs and Bayesian filters are operationally very similar.
-Bayesian filters need problem-specific hand-tuning. Given sufficient data, an RNN can be trained to do the same task and avoid problem-specific tracker engineering. The head pose is estimated in terms of pitch, yaw and roll angles
+This approach uses RNN for joint head pose estimation and facial landmark tracking. 
+It proposes RNN as an alternative approach that performs better than previous video-based approaches for dynamic facial analysis which use Kalman filters or particle filters. The method is inspired by the fact that RNNs and Bayesian filters are operationally very similar although  Bayesian filters need problem-specific hand-tuning. Given sufficient data, an RNN can be trained to do the same task and avoid problem-specific tracker engineering. The head pose is estimated in terms of pitch, yaw and roll angles
 The authors create a synthetic dataset \textbf{SynHead} to cater to the need for large training data. The approach employs FC-RNN to exploit the generalization from a pre-trained CNN. It consists of CNN layers followed by recurrent layers as dense layers. RNN is more robust to occlusions and large head poses. Figure \ref{cnn_rnn} shows the proposed end-to-end network for joint estimation and tracking. The CNN and RNN are trained together end-to-end. The network is a modified VGG16 with an extra fully connected layer with 1024 neurons and the output layer consists of 3 neurons for the pitch, yaw and roll angles. For facial landmark detection, the same network is used with the only difference that the output layer contains 136 neurons corresponding to the locations of the 68 landmarks.\\
 
 
 For each frame, the mean Euclidean distance of the 68 landmarks normalized by the diagonal distance of the ground truth box is computed. The metrics used for evaluation are \textit{area under the curve} which is the area under the cumulative error distribution curve, and \textit{failure rate} which is the percentage of images whose errors are larger than a given threshold.
 
 \begin{figure}
-\copyrightbox[b]{\includegraphics[scale=0.5]{Media/cnn_rnn}}%
-{Source: Jinwei Gu, Xiaodong Yang, Shalini De Mello, Jan Kautz. Dynamic Facial Analysis: From Bayesian Filters to Recurrent Neural Network}
-\caption{Proposed end-to-end CNN RNN network}
+\centering
+\includegraphics[scale=0.5]{Media/cnn_rnn}
+\caption{Proposed end-to-end CNN RNN network. Source:\cite{dynamic_facial_analysis}}
 \label{cnn_rnn}
 \end{figure}
 
@@ -170,9 +169,9 @@ This approach exploits the fact that bounding box tracking and landmark detectio
 Figure \ref{deformable_face_tracking} shows different strategies for deformable face tracking. This paper proposes DADRL (Dual-Agent Deep Learning) framework for simultaneous bounding box tracking and landmark detection in an interactive manner. It uses reinforcement learning to learn to make adaptive decisions during face tracking. The architecture consists of a \textit{Tracking agent} and an \textit{Alignment agent} and \textit{communication channels} between the agents. The two agents are trained simultaneously to learn two conditional distributions. Figure \ref{dadrl_architecture} shows the proposed architecture. The message channels are trained using deep Q-learning algorithm\\
 
 \begin{figure}
-\copyrightbox[b]{\includegraphics[scale=0.5]{Media/deformable_face_tracking}}%
-{Source: Minghao Guo, Jiwen Lu, Jie Zhou. Dual-Agent Deep Reinforcement Learning for Deformable Face Tracking}
-\caption{Strategies for deformable face tracking}
+\centering
+\includegraphics[scale=0.5]{Media/deformable_face_tracking}
+\caption{Strategies for deformable face tracking. Source:\cite{dadrl}}
 \label{deformable_face_tracking}
 \end{figure}
 
@@ -181,9 +180,9 @@ If $I_k$ is the $k^{th}$ frame, $B_k$ is the bounding box for the $k^{th}$ frame
 $p\left(B_{k} | I_{k}\right) p\left(V_{k} | B_{k}, I_{k}\right)=p\left(V_{k} | I_{k}\right) p\left(B_{k} | V_{k}, I_{k}\right)$\\
 
 \begin{figure}
-\copyrightbox[b]{\includegraphics[scale=0.5]{Media/DADRL}}%
-{Source: Minghao Guo, Jiwen Lu, Jie Zhou. Dual-Agent Deep Reinforcement Learning for Deformable Face Tracking}
-\caption{DADRL architecture}
+\centering
+\includegraphics[scale=0.5]{Media/DADRL}
+\caption{DADRL architecture. Source:\cite{dadrl}}
 \label{dadrl_architecture}
 \end{figure}
 
@@ -192,12 +191,14 @@ The learning objectives of bounding box tracking and landmark detection are trea
 
 \subsection{Two Stream Transformer Networks (2017) \cite{tstn}}
 
-This approach aims to capture both spatial information on still frames as well as temporal information across frames. It proposes a two-stream deep learning method that decomposes the video input to spatial and temporal streams. The spatial stream aims to capture appearance information from still frames. It is trained to transform image pixels to landmark positions directly on still frames and then to refine the current facial shape based on the previous shape. The temporal stream aims to capture temporal consistency information across successive frames. It consists of an encoder-decoder module. The encoder is trained to encode the spatial information as active appearance codes that capture the whole face changes across frames in the temporal dimension. The decoder remaps the learned codes to the original face input size. The temporal consistency information for each landmark is used to improve alignment accuracy. It also consists of a two-layer RNN in between the encoder-decoder module. The first layer captures spatial-temporal appearance features whereas the second layer memorizes the temporal information across frames. Facial landmarks are determined by a weighted fusion of both spatial and temporal streams. Figure \ref{TSTN} shows the proposed architecture. The landmark positions are refined simultaneously in both the streams.
+This approach proposes a two-stream deep learning method that decomposes the video input to spatial and temporal streams. The spatial stream aims to capture appearance information from still frames and it is trained to transform image pixels to landmark positions directly on still frames and then to refine the current facial shape based on the previous shape. On the other hand, the temporal stream aims to capture temporal consistency information across successive frames. 
+
+Figure \ref{TSTN} shows the proposed architecture. The temporal stream consists of an encoder-decoder module. The encoder is trained to encode the spatial information as active appearance codes that capture the whole face changes across frames in the temporal dimension. The decoder remaps the learned codes to the original face input size. The temporal consistency information for each landmark is used to improve alignment accuracy. It also consists of a two-layer RNN in between the encoder-decoder module. The first layer captures spatial-temporal appearance features whereas the second layer memorizes the temporal information across frames. Facial landmarks are determined by a weighted fusion of both spatial and temporal streams. The landmark positions are refined simultaneously in both the streams.
 
 \begin{figure}
-\copyrightbox[b]{\includegraphics[scale=0.5]{Media/TSTN}}%
-{Source: Hao Liu, Senior Member, IEEE, Jianjiang Feng, Member, IEEE, Jie Zhou, Senior Member, IEEE. Two-Stream Transformer Networks for Video-based Face Alignment}
-\caption{TSTN pipeline}
+\centering
+\includegraphics[scale=0.5]{Media/TSTN}
+\caption{TSTN pipeline. Source:\cite{tstn}}
 \label{TSTN}
 \end{figure}
 
@@ -210,15 +211,17 @@ Previous state-of-the-art regression-based approaches start with an initial shap
 Figure \ref{farn_training} shows the training architecture of Face Alignment Recurrent Network. The face image, initial face shape, and ground truth shape are given as input to the network. The image is passed through several convolutional and max-pooling layers to obtain a feature map. The initial face shape contains facial landmarks. Region of Interest (ROI) pooling is applied around each landmark to obtain ROI pooling features. The ROI pooling features are concatenated and given to a fully connected layer followed by an LSTM layer. The network outputs the predicted shape increment over the initial face shape. The initial face shape is summed over the predicted shape increment to obtain updated initial face shape. This process continues recurrently for $T$ stages.
 
 \begin{figure}
-\copyrightbox[b]{\includegraphics[scale=0.5]{Media/farn_training}}%
-{Source: Hao Liu, Senior Member, IEEE, Jianjiang Feng, Member, IEEE, Jie Zhou, Senior Member, IEEE. Two-Stream Transformer Networks for Video-based Face Alignment}
-\caption{FARN training architecture}
+\centering
+\includegraphics[scale=0.5]{Media/farn_training}
+\caption{FARN training architecture. Source:\cite{farn}}
 \label{farn_training}
 \end{figure}
 
 
 
 \section{Performance Comparison}
+In this section we compare the above methods starting from the datasets used for training and testing, evaluation metrics, evaluation on common dataset and robustness to challenges.
+
 \cite{rednet} is trained on both image and video datasets with different configurations for different datasets. The training happens in 3 steps. In the first step, the network without the temporal recurrent learning and supervised identity disentangling modules is pre-trained using the image datasets AFLW, Helen and LFPW. In the second step, supervised identity disentangling is included and trained with other modules using the image-based LFW dataset. In the third step, the temporal recurrent learning module is included and the entire model is fine-tuned using the video dataset 300-VW. Inter-ocular distance is used to normalize the Root Mean Square Error(RMSE). \cite{dynamic_facial_analysis} is trained using the created SynHead dataset with the L2 loss function and tested on the BIWI dataset. It is then fine-tuned using training data from the BIWI dataset. For landmark detection, the corresponding model is trained and tested using a randomly split 300-VW dataset. \cite{dadrl} is trained in two stages. The \textbf{first stage} is the \textit{supervised learning stage} in which the two agents are trained separately. All training data from 300 faces in the wild challenge (300-W image dataset) is used to train the alignment agent. The 300-VW training set is used to train the tracking agent. The communicated messages are set to zero in this stage. The \textbf{second stage} is the \textit{reinforcement learning stage} in which the whole network is trained with the 300-VW training set. The model is evaluated on the test set of 300-VW. For evaluation, Normalized Root Mean Square Error and cumulative error distribution plots are used. \cite{tstn} is trained using the 300-VW training set. The pre-trained spatial stream network is finetuned beforehand. The model is evaluated on the testing sets of Talking Face(TF) and 300-VW datasets. Normalized Root-Mean-Square-Error and cumulative error distribution plots are used for evaluating the model. \cite{farn} is trained on the training partition consisting of training sets of LFPW, Helen and the entire AFW with 3148 images in total. The testing partition contains 3 parts - the common subset, the challenging subset, and the full set. The common subset consists of testing set of LFPW and Helen with 554 images in total. The challenging subset consists of the IBUG dataset which contains additional annotations for 135 images in difficult poses and expressions. The full set consists of both the common subset and the challenging subset with 689 images. The model is evaluated using point-to-point Root Mean Square Error between the face shape and the ground truth annotations.\\
 
 \cite{rednet}, \cite{dynamic_facial_analysis}, \cite{tstn} and \cite{farn} provide testing results on challenging category of 300-VW test set for 68 landmarks. \cite{rednet} and \cite{tstn} provide results on Talking Face dataset \cite{tf}. \cite{rednet} provides results for both 68 and 7 landmarks in both datasets.
@@ -226,6 +229,7 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 Table \ref{comparison} reports the RMSE of the compared methods on 300-VW and TF\cite{tf} datasets.\\
  
 \begin{table}[]
+\centering
 \caption{Evaluation on 300-VW and TF test sets}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
@@ -242,7 +246,7 @@ FARN\cite{farn}                    & 5.49                                       
 
 
 
-\section{Conclusion and Discussion}
+\section{Conclusion}
 
 In this paper, we have reviewed some of the state-of-the-art deep learning methods for video-based face alignment. All of these methods avoid hand-engineering by using neural networks. Each of the methods is independent and not an improvisation of the other. All these methods use RNN in common to model temporal information. \cite{rednet} seems to perform the best on the 300-VW dataset for both 7 and 68 landmarks. \cite{tstn} has the least error on the TF dataset for 7 landmarks. 
 
