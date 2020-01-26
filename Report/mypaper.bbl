@@ -2,7 +2,7 @@
 
 \bibitem{tf}
 Fgnet: Talking face video.
-\newblock 2004.
+\newblock {\em Tech. rep.}, 2004.
 
 \bibitem{ibug}
 Christos~Sagonas a, Epameinondas Antonakosa, Georgios Tzimiropoulosb, Stefanos
@@ -33,12 +33,6 @@ X.~P. {Burgos-Artizzu}, P.~{Perona}, and P.~{Dollár}.
 Paola Campadelli, Raffaella Lanzarotti, and C.~Savazzi.
 \newblock A feature-based face recognition system.
 \newblock pages 68-- 73, 10 2003.
-
-\bibitem{300-VW_1}
-Grigorios Chrysos, Epameinondas Antonakos, Stefanos Zafeiriou, and Patrick
-  Snape.
-\newblock Offline deformable face tracking in arbitrary videos.
-\newblock 12 2015.
 
 \bibitem{biwi}
 Gabriele Fanelli, Matthias Dantone, Juergen Gall, Andrea Fossati, and Luc
@@ -95,16 +89,16 @@ Hao Liu, Jiwen Lu, Jianjiang Feng, and Jie Zhou.
   PP:1--1, 08 2017.
 
 \bibitem{rednet}
-Xi~Peng, Rogerio Feris, Xiaoyu Wang, and Dimitris Metaxas.
-\newblock A recurrent encoder-decoder network for sequential face alignment.
-\newblock 08 2016.
+Xi~Peng, Rogerio~S. Feris, Xiaoyu Wang, and Dimitris~N. Metaxas.
+\newblock Red-net: A recurrent encoder-decoder network for video-based face
+  alignment, 2018.
 
 \bibitem{fm}
 Xi~Peng, Shaoting Zhang, Yang Yu, and Dimitris Metaxas.
 \newblock Piefa: Personalized incremental and ensemble face alignment.
 \newblock 12 2015.
 
-\bibitem{300-VW_2}
+\bibitem{300-VW}
 Jie Shen, Stefanos Zafeiriou, Grigorios Chrysos, Jean Kossaifi, Georgios
   Tzimiropoulos, and Maja Pantic.
 \newblock The first facial landmark tracking in-the-wild challenge: Benchmark
@@ -117,10 +111,11 @@ Keqiang Sun, Wayne Wu, Tinghao Liu, Shuo Yang, Quan Wang, Qiang Zhou, Zuochang
 \newblock Fab: A robust facial landmark detection framework for motion-blurred
   videos, 2019.
 
-\bibitem{300-VW_3}
-Georgios Tzimiropoulos.
-\newblock Project-out cascaded regression with an application to face
-  alignment.
-\newblock pages 3659--3667, 06 2015.
+\bibitem{3d_menpo}
+Stefanos Zafeiriou, Grigorios~G Chrysos, Anastasios Roussos, Evangelos
+  Ververas, Jiankang Deng, and George Trigeorgis.
+\newblock The 3d menpo facial landmark tracking challenge.
+\newblock In {\em Proceedings of the IEEE International Conference on Computer
+  Vision Workshops}, pages 2503--2511, 2017.
 
 \end{thebibliography}

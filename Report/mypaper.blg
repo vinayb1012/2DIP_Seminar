@@ -3,15 +3,11 @@ The style file: plain.bst
 Database file #1: bibexample.bib
 Warning--to sort, need author or key in tf
 Warning--empty author in tf
-Warning--empty journal in tf
 Warning--empty booktitle in face_recognition
-Warning--empty booktitle in 300-VW_1
 Warning--empty booktitle in dynamic_facial_analysis
 Warning--empty publisher in dadrl
 Warning--empty booktitle in aflw
 Warning--empty booktitle in helen
-Warning--empty journal in rednet
 Warning--empty booktitle in fm
-Warning--empty booktitle in 300-VW_2
-Warning--empty booktitle in 300-VW_3
-(There were 13 warnings)
+Warning--empty booktitle in 300-VW
+(There were 9 warnings)
