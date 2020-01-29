@@ -182,9 +182,10 @@ This method leverages temporal information to predict facial landmarks in each f
 \begin{figure}
 \centering
 \includegraphics[scale=0.5]{Media/rednet_architecture}
-\caption{Overview of REDNet pipeline Source:\cite{rednet}}
+\caption{Overview of REDNet pipeline. Source:\cite{rednet}}
 \label{rednet_architecture}
 \end{figure}
+%\vspace{-1mm}
 
 The network consists of 4 modules:
 \begin{itemize}
@@ -213,7 +214,7 @@ The approach employs FC-RNN to exploit the generalization from a pre-trained CNN
 \caption{Proposed end-to-end CNN RNN network. Source:\cite{dynamic_facial_analysis}}
 \label{cnn_rnn}
 \end{figure}
-
+\vspace{-1mm}
 \subsection{Dual-Agent Deep Reinforcement Learning (2018) \cite{dadrl}}
 This approach exploits the fact that bounding box tracking and landmark detection are dependent. The accuracy of the detected facial landmarks depends on how good the bounding box is.
 Figure \ref{deformable_face_tracking} shows different strategies for deformable face tracking including the proposed DADRL (Dual-Agent Deep Learning) architecture. This framework is designed for simultaneous bounding box tracking and landmark detection in an interactive manner and uses reinforcement learning to learn to make adaptive decisions during face tracking. The architecture consists of a \textit{Tracking agent}, an \textit{Alignment agent} and \textit{communication channels} between the agents, as shown in Figure \ref{dadrl_architecture}. The two agents are trained simultaneously to learn two conditional distributions.  The message channels are trained using deep Q-learning algorithm.
@@ -224,14 +225,14 @@ Figure \ref{deformable_face_tracking} shows different strategies for deformable 
 \caption{Strategies for deformable face tracking. Source:\cite{dadrl}}
 \label{deformable_face_tracking}
 \end{figure}
-
+\vspace{-1mm}
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.5]{Media/DADRL}
 	\caption{DADRL architecture. Source:\cite{dadrl}}
 	\label{dadrl_architecture}
 \end{figure}
-
+\vspace{-1mm}
 If $I_k$ is the $k^{th}$ frame, $B_k$ is the bounding box for the $k^{th}$ frame and $V_k$ is the vector of $L$ landmarks, then the probabilistic duality is given by:  
 
 \begin{equation}
@@ -253,7 +254,7 @@ Figure \ref{TSTN} shows the proposed TSTN architecture. The temporal stream cons
 \caption{TSTN pipeline. Source:\cite{tstn}}
 \label{TSTN}
 \end{figure}
-
+\vspace{-1mm}
 \subsection{Face Alignment Recurrent Network (2017) \cite{farn}}
 
 Previous state-of-the-art regression-based approaches start with an initial shape estimation and iteratively estimate the facial shape at successive stages by estimating an increment from the previous estimation. This paper proposes to improve the cascade shape regression by using LSTM and Region Convolutional Neural Network (RCNN). The LSTM model exploits both spatial and temporal information for landmark detection in images and videos in uncontrolled conditions. The predicted landmark location is used as a basis for estimation in the next stage and frame in spatial and temporal dimensions. The process continues recurrently until the face shape is finalized. 
@@ -266,7 +267,7 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 \caption{FARN training architecture. Source:\cite{farn}}
 \label{farn_training}
 \end{figure}
-
+\vspace{-1mm}
 \section{Performance Comparison}
 In this section we compare the above methods starting from the datasets used for training and testing, evaluation metrics, evaluation on common dataset and robustness to challenges.
 
