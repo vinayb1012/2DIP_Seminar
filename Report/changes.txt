@@ -1,0 +1,20 @@
+Changes needed - 
+
+
+* Improvise conclusion
+* Divide bulky paragraphs
+* Reduce white space after images
+* Line 63 - explain identity code and identity constraint
+* Mention drawbacks of each method
+* Arrange approaches in chronological order
+* Shorten long sentences.
+* Drawbacks of each approach
+
+Changes done - 
+
+* Table 1 - Wild? remove ?
+* Use full forms at first occurrences at lines 35, 36 and 59
+* Better resolution images
+* Add structure of the paper in introduction
+* Reformulate the sentence on line number 6 as " the task of detecting facial landmarks in the wild(unconstrained) still remains a challenging task"
+* Explain figure 1 in detail
