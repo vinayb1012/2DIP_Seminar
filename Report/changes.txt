@@ -1,7 +1,7 @@
 Changes needed - 
 
 
-* Improvise conclusion (In progress)
+
 * Divide bulky paragraphs
 * Mention drawbacks of each method
 * Shorten long sentences.
@@ -18,3 +18,4 @@ Changes done -
 * Line 63 - explain identity code and identity constraint
 * Reduce white space after images
 * Arrange approaches in chronological order
+* Improvise conclusion
