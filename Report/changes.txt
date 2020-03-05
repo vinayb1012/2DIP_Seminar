@@ -4,8 +4,7 @@ Changes needed -
 
 * Divide bulky paragraphs
 * Mention drawbacks of each method
-* Shorten long sentences.
-* Drawbacks of each approach
+
 
 Changes done - 
 
@@ -19,3 +18,4 @@ Changes done -
 * Reduce white space after images
 * Arrange approaches in chronological order
 * Improvise conclusion
+* Shorten long sentences.
