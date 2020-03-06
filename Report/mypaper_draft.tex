@@ -180,7 +180,8 @@ This approach uses RNN for head pose estimation and facial landmark tracking.
 It proposes RNN as an alternative approach that performs better than previous video-based approaches for dynamic facial analysis which use Kalman filters or particle filters. The method is inspired by the fact that RNNs and Bayesian filters are operationally very similar, although Bayesian filters need problem-specific hand-tuning. Given sufficient data, an RNN can be trained to do the same task and avoid problem-specific tracker engineering.
 The authors create a synthetic dataset \textbf{SynHead} to cater to the need for large training data.
 
-The approach employs FC-RNN to exploit the generalization from a pre-trained CNN and consists of CNN layers followed by recurrent layers as dense layers. Figure \ref{cnn_rnn} shows the proposed architecture for head pose estimation and tracking. The CNN and RNN are trained together end-to-end. The head pose is estimated in terms of pitch, yaw and roll angles. The network is a modified VGG16 with an extra fully connected layer with 1024 neurons and the output layer consists of 3 neurons for the pitch, yaw and roll angles. For facial landmark detection, the same network is used with the only difference that the output layer contains 136 neurons corresponding to the locations of the 68 landmarks. RNN makes the model robust to occlusions and large head poses.\\
+The approach employs FC-RNN to exploit the generalization from a pre-trained CNN and consists of CNN layers followed by recurrent layers as dense layers. Figure \ref{cnn_rnn} shows the proposed architecture for head pose estimation and tracking. The CNN and RNN are trained together end-to-end. The head pose is estimated in terms of pitch, yaw and roll angles. The network is a modified VGG16 with an extra fully connected layer with 1024 neurons and the output layer consists of 3 neurons for the pitch, yaw and roll angles. For facial landmark detection, the same network is used with the only difference that the output layer contains 136 neurons corresponding to the locations of the 68 landmarks. RNN makes the model robust to occlusions and large head poses.
+The weights of the RNN are fixed once the training is complete, and the model cannot adapt dynamically to new data.
 
 \begin{figure}
 	\centering
@@ -195,10 +196,10 @@ The approach employs FC-RNN to exploit the generalization from a pre-trained CNN
 This approach proposes a two-stream deep learning method that decomposes the video input to spatial and temporal streams. The spatial stream aims to capture appearance information from still frames and it is trained to transform image pixels to landmark positions directly on still frames and then to refine the current facial shape based on the previous shape. On the other hand, the temporal stream aims to capture temporal consistency information across successive frames.
 
 Figure \ref{TSTN} shows the proposed TSTN architecture. The temporal stream consists of an encoder-decoder module. The encoder is trained to encode the spatial information as active appearance codes that capture the whole face changes across frames in the temporal dimension. The decoder remaps the learned codes to the original face input size. The temporal consistency information for each landmark is used to improve alignment accuracy. It also consists of a two-layer RNN in between the encoder-decoder module. The first layer captures spatial-temporal appearance features whereas the second layer memorizes the temporal information across frames. Facial landmarks are determined by a weighted fusion of both spatial and temporal streams. The landmark positions are refined simultaneously in both the streams.
-
+The weights for the fusion of both the streams are not learnable and has to be set manually. The authors conducted experiments for different weights{(100,0), (0,100), (80,20), (20,80), (50,50)} and achieved the best performance for equal weight of 50\% for both the streams
 \begin{figure}
 	\centering
-	\vspace{-3mm}
+	\vspace{-7mm}
 	\includegraphics[scale=0.5]{Media/TSTN}
 	\vspace{-3mm}
 	\caption{TSTN pipeline. Source:\cite{tstn}}
@@ -208,7 +209,7 @@ Figure \ref{TSTN} shows the proposed TSTN architecture. The temporal stream cons
 \vspace{-8mm}
 	\subsection{Face Alignment Recurrent Network (2017) \cite{farn}}
 
-Previous state-of-the-art regression-based approaches start with an initial shape estimation and iteratively estimate the facial shape at successive stages by estimating an increment from the previous estimation. This paper proposes to improve the cascade shape regression by using LSTM and Region Convolutional Neural Network (RCNN). The LSTM model exploits both spatial and temporal information for landmark detection in images and videos in uncontrolled conditions. The predicted landmark location is used as a basis for estimation in the next stage and frame in spatial and temporal dimensions. The process continues recurrently until the face shape is finalized.
+Previous state-of-the-art regression-based approaches start with an initial shape estimation and iteratively estimate the facial shape at successive stages by estimating an increment from the previous estimation. This paper proposes to improve the cascade shape regression by using LSTM and Region Convolutional Neural Network (RCNN). The LSTM model exploits both spatial and temporal information for landmark detection in images and videos in uncontrolled conditions. The predicted landmark location is used as a basis for estimation in the next stage and frame in spatial and temporal dimensions. The process continues recurrently until the face shape is finalized. The proposed model is for facial landmark detection in images under uncontrolled conditions and not for facial landmark tracking.
 
 Figure \ref{farn_training} shows the training architecture of Face Alignment Recurrent Network(FARN). The face image, initial face shape, and ground truth shape are given as input to the network. The image is passed through several convolutional and max-pooling layers to obtain a feature map. The initial face shape contains facial landmarks. Region of Interest (ROI) pooling is applied around each landmark to obtain ROI pooling features. The ROI pooling features are concatenated and given to a fully connected layer followed by an LSTM layer. The network outputs the predicted shape increment over the initial face shape. The initial face shape is summed over the predicted shape increment to obtain updated initial face shape. This process continues recurrently for $T$ stages.
 
@@ -247,6 +248,7 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 		\item[(4)] \textbf{Supervised identity disentangling}:-
 		Complete identity and non-identity factor disentangling cannot be guaranteed. More supervised information is needed to achieve better separation of the features. This module applies identity constraint to the identity code(temporal-invariant factors) to further separate identity code from the non-identity code(temporal-variant factors). Face recognition is applied to the identity code to classify the people present in the frames. This is shown to yield better generalization and better test accuracy\\
 	\end{itemize}
+	This model may have high computational complexity due to the spatial recurrent learning block and the usage of VGG16 for the encoder and the decoder.
 	
 
 
@@ -257,6 +259,7 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 	
 	\begin{figure}
 		\centering
+		\vspace{-7mm}
 		\includegraphics[scale=0.5]{Media/deformable_face_tracking}
 		\vspace{-3mm}
 		\caption{Strategies for deformable face tracking. Source:\cite{dadrl}}
@@ -282,7 +285,7 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 	The learning objectives of bounding box tracking and landmark detection are treated as two conditional probabilities and the dependency between these two tasks is formulated as two marginal distributions. Since the ground-truth marginal distributions are not available, communication channels between the agents are used as alternatives to satisfy the probabilistic duality. For each frame, the terminal state of the previous frame is used for initializing the current state. The two agents decide a sequence of actions based on the observed state and exchanged messages, to adjust the bounding box and regress facial landmarks simultaneously. The messages sent from the tracking agent to the alignment agent are encoded by a deconvolution layer. It provides additional textural information to the alignment agent to improve its robustness. The messages from the alignment agent to the tracking agent are encoded by an LSTM unit. It provides 3D pose information to the tracking agent to improve bounding box tracking.
 	
 
-
+	\vspace{-5mm}
 	\section{Performance Comparison}
 	In this section we compare the above methods starting from the datasets used for training and testing, evaluation metrics, evaluation on common dataset and robustness to challenges.
 	
@@ -290,7 +293,7 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 	
 	\textbf{TSTN} \cite{tstn} is trained using the 300-VW training set. The pre-trained spatial stream network is finetuned beforehand. The model is evaluated on the testing sets of Talking Face(TF) and 300-VW datasets. Normalized Root-Mean-Square-Error and cumulative error distribution plots are used for evaluating the model. The temporal stream consisting of the encoder-decoder module and the 2-layer RNN provides consistency over time.  The spatial stream which provides complementary appearance information from still frames, achieves robustness to large head poses, occlusions and variations of expressions.
 	
-	\textbf{FARN} \cite{farn} is trained on the training partition consisting of training sets of LFPW, Helen and the entire AFW with 3148 images in total. The testing partition contains 3 parts - the common subset, the challenging subset, and the full set. The common subset consists of testing set of LFPW and Helen with 554 images in total. The challenging subset consists of the IBUG dataset which contains additional annotations for 135 images in difficult poses and expressions. The full set consists of both the common subset and the challenging subset with 689 images. The model is evaluated using point-to-point Root-Mean-Square-Error between the face shape and the ground truth annotations. The end-to-end trained model runs extremely fast (18ms) with robustness to large head poses and occlusions.
+	\textbf{FARN} \cite{farn} is trained on the training partition consisting of training sets of COFW, LFPW, Helen and the entire AFW with 3148 images in total. The testing partition contains 3 parts - the common subset, the challenging subset, and the full set. The common subset consists of testing set of LFPW and Helen with 554 images in total. The challenging subset consists of the IBUG dataset which contains additional annotations for 135 images in difficult poses and expressions. The full set consists of both the common subset and the challenging subset with 689 images. The model is evaluated using point-to-point Root-Mean-Square-Error between the face shape and the ground truth annotations. The end-to-end trained model runs extremely fast (18ms) with robustness to large head poses and occlusions.
 	
 	\textbf{REDNet} \cite{rednet} is trained on both image and video datasets with different configurations for different datasets. The training happens in 3 steps. In the first step, the network without the temporal recurrent learning and supervised identity disentangling modules is pre-trained using the image datasets AFLW, Helen and LFPW. In the second step, supervised identity disentangling is included and trained with other modules using the image-based LFW dataset. In the third step, the temporal recurrent learning module is included and the entire model is fine-tuned using the video dataset 300-VW. Inter-ocular distance is used to normalize the Root-Mean-Square-Error(RMSE).
 	The coarse-to-fine strategy in the two-step spatial recurrent learning(landmark detection and landmark regression) makes the model robust to large head pose and partial occlusions.
@@ -301,8 +304,8 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 	
 	REDNet\cite{rednet}, Dynamic Facial Analysis\cite{dynamic_facial_analysis}, TSTN\cite{tstn} and FARN\cite{farn} provide testing results on challenging category of 300-VW test set for 68 landmarks. REDNet\cite{rednet} and TSTN\cite{tstn}(7 landmarks) provide results on Talking Face dataset \cite{tf}. REDNet\cite{rednet} provides results for both 68 and 7 landmarks in both datasets.
 	Table \ref{comparison} reports the RMSE of the compared methods on 300-VW and TF\cite{tf} datasets.
-	DADRL\cite{dadrl} uses normalized point-to-point error for evaluation and hence the evaluation results provided in the paper cannot be used to compare to other methods.
-	REDNet\cite{rednet} performs the best on the 300-VW dataset and has the least error among the compared methods for both 7 and 68 landmarks. TSTN\cite{tstn} shows the best performance on the controlled TF dataset for 7 landmarks. Although FARN\cite{farn} does not have the lowest error, it performs in real time (18ms). DADRL3D is the only method that tracks 3D landmarks.
+	DADRL\cite{dadrl} reports normalized RMSE for a few videos with heavy occlusions from the most challenging Category 3 of 300-VW. It has the lowest error among the others on the 300-VW dataset for 68 landmarks.
+	REDNet\cite{rednet} reports RMSE for Category 3 of 300-VW dataset and TF dataset for both 7 and 68 landmarks. TSTN\cite{tstn} shows the best performance on the controlled TF dataset for 7 landmarks. Although FARN\cite{farn} does not have the lowest error, it performs in real time (18ms). DADRL3D is the only method that tracks 3D landmarks.
 	
 	\vspace{-8mm}
 	\begin{table}[]
@@ -315,9 +318,9 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 			Dynamic Facial Analysis\cite{dynamic_facial_analysis} & 6.16 & - & - & - \\ \hline
 			TSTN\cite{tstn} & 5.59 & - & - & \textbf{2.13} \\ \hline
 			FARN\cite{farn} & 5.90 & - & - & - \\ \hline
-			REDNet\cite{rednet} & \textbf{5.15} & \textbf{5.29} & \textbf{2.77 } & 2.89 \\ \hline
+			REDNet\cite{rednet} & 5.15 & \textbf{5.29} & \textbf{2.77 } & 2.89 \\ \hline
 			
-			DADRL\cite{dadrl} & - & - & - & - \\ \hline
+			DADRL\cite{dadrl} & \textbf{3.09} & - & - & - \\ \hline
 
 		\end{tabular}
 		\label{comparison}
@@ -326,6 +329,8 @@ Figure \ref{farn_training} shows the training architecture of Face Alignment Rec
 	\section{Conclusion}
 	
 	In this paper, we have reviewed some of the state-of-the-art deep learning methods for video-based face alignment. All of these methods avoid hand-engineering by using neural networks. All these methods use RNN in common to model temporal information. Dynamic facial analysis\cite{dynamic_facial_analysis} uses CNN followed by RNN to exploit temporal information. TSTN\cite{tstn} uses spatial and temporal streams to capture appearance information on still frames and temporal information across frames. FARN\cite{farn} uses LSTM to detect facial landmarks. REDNet\cite{rednet} uses an encoder-decoder network to separate temporal-variant and temporal-invariant factors and applies recurrent learning to the temporal-variant factors. DADRL \cite{dadrl} exploits the dependency between bounding box generation and facial landmark tracking by treating the two tasks as agents and using deep Q-learning to maximize the accuracy in facial landmarks over several iterations. Although the recent methods have shown robustness to large head poses and occlusions, face tracking under difficult illumination is still a challenge.
+	
+	\vspace{-3mm}
 	
 	%
 	

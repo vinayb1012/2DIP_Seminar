@@ -3,7 +3,7 @@ Changes needed -
 
 
 * Divide bulky paragraphs
-* Mention drawbacks of each method
+
 
 
 Changes done - 
@@ -19,3 +19,4 @@ Changes done -
 * Arrange approaches in chronological order
 * Improvise conclusion
 * Shorten long sentences.
+* Mention drawbacks of each method 
